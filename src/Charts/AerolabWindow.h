@@ -43,6 +43,8 @@ class AerolabWindow : public GcChartWindow {
   void setData(RideItem *ride);
   double getCanvasTop() const;
   double getCanvasBottom() const;
+  double getCanvasLeft() const;
+  double getCanvasRight() const;
 
   QSlider *eoffsetSlider;
 

@@ -203,11 +203,11 @@ Aerolab::Aerolab(
   rideItem(NULL),
   smooth(1), bydist(true), autoEoffset(true) {
 
-  crr       = 0.005;
-  cda       = 0.500;
-  totalMass = 85.0;
-  rho       = 1.236;
-  eta       = 1.0;
+  crr       = 0.004;
+  cda       = 0.220;
+  totalMass = 93.0;
+  rho       = 1.2;
+  eta       = 0.97;
   eoffset   = 0.0;
   constantAlt = false;
 
@@ -443,7 +443,7 @@ struct DataPoint {
 };
 
 void
-Aerolab::recalc( bool new_zoom ) {
+Aerolab::recalc( bool new_zoom) {
 
   if (timeArray.empty())
     return;
@@ -479,8 +479,6 @@ Aerolab::recalc( bool new_zoom ) {
   if( new_zoom )
       setAxisScale(xBottom, 0.0, (bydist?totalRideDistance:rideTimeSecs));
 
-
-
   setYMax(new_zoom );
   refreshIntervalMarkers();
 
@@ -492,6 +490,7 @@ Aerolab::recalc( bool new_zoom ) {
 void
 Aerolab::setYMax(bool new_zoom)
 {
+
           if (veCurve->isVisible())
           {
 
@@ -523,8 +522,30 @@ Aerolab::setYMax(bool new_zoom)
    //          min( veCurve->minYValue(), altCurve->minYValue() ) - 10,
    //          10.0 + max( veCurve->maxYValue(), altCurve->maxYValue() ) );
 
-        minY = min( veCurve->minYValue(), altCurve->minYValue() ) - 10;
-        maxY = 10.0 + max( veCurve->maxYValue(), altCurve->maxYValue() );
+        int xxx = 0;
+        int yyy = 0;
+        if (bydist) {
+             xxx = (rideItem->ride()->distanceIndex(parent->getCanvasLeft()));
+             yyy = (rideItem->ride()->distanceIndex(parent->getCanvasRight()));
+        }
+        
+        else {
+             xxx = (rideItem->ride()->timeIndex(parent->getCanvasLeft()));
+             yyy = (rideItem->ride()->timeIndex(parent->getCanvasRight()));
+        }
+
+
+        double maxa = -100000.0;
+        double mina = 100000.0;
+        if (!veArray.empty()) {
+          for (int i=xxx;i<yyy+1;i++) {
+            double tmp = veArray.at(i);
+            if (tmp > maxa) maxa = tmp;
+            if (tmp < mina) mina = tmp;
+          }
+        }      
+        minY = min( mina, altCurve->minYValue() ) - 0.1;
+        maxY = 0.1 + max( maxa, altCurve->maxYValue() );
 
     } else {
       //setAxisScale(yLeft,
@@ -544,11 +565,8 @@ Aerolab::setYMax(bool new_zoom)
               else
 
               {
-
                 minY = parent->getCanvasTop();
-
                 maxY = parent->getCanvasBottom();
-
               }
 
               //adjust eooffset

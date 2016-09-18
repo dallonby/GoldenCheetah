@@ -563,12 +563,18 @@ void
 AerolabWindow::zoomInterval(IntervalItem *which) {
   QwtDoubleRect rect;
 
+  double x1, x2 = 0;
+
   if (!aerolab->byDistance()) {
     rect.setLeft(which->start/60);
     rect.setRight(which->stop/60);
+    x1 = which->start/60;
+    x2 = which->stop/60;
   } else {
     rect.setLeft(which->startKM);
     rect.setRight(which->stopKM);
+    x1 = which->startKM;
+    x2 = which->stopKM;
   }
   rect.setTop(aerolab->veCurve->maxYValue()*1.1);
   rect.setBottom(aerolab->veCurve->minYValue()-10);
@@ -599,4 +605,18 @@ double AerolabWindow::getCanvasBottom() const
 {
     const QwtDoubleRect &canvasRect = allZoomer->zoomRect();
     return canvasRect.bottom();
+}
+
+
+double AerolabWindow::getCanvasLeft() const
+{
+    const QwtDoubleRect &canvasRect = allZoomer->zoomRect();
+    return canvasRect.left();
+}
+
+
+double AerolabWindow::getCanvasRight() const
+{
+    const QwtDoubleRect &canvasRect = allZoomer->zoomRect();
+    return canvasRect.right();
 }
