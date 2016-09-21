@@ -1189,7 +1189,11 @@ struct FitFileReaderState
 
                         switch (_values.type) {
                             case SingleValue: p_deve->number[idx]=_values.v/(float)scale+offset; break;
-                            case FloatValue: p_deve->number[idx]=_values.f/(float)scale+offset; break;
+                            case FloatValue: 
+                            	p_deve->number[idx]=_values.f/(float)scale+offset;
+                            	if (field.num == 0) headwind = _values.f * 3.6;
+                            	if (field.num == 9) smO2 = _values.f;
+                            	break;
                             case StringValue: p_deve->string[idx]=_values.s.c_str(); break;
                             default: break;
                         }
